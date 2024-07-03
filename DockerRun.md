@@ -1,8 +1,8 @@
 # Docker Run Commands
-''' bash
+``` bash
 - Run command in a new container from a tagged image:
    docker run image:tag command
-'''
+```
  - Run command in a new container in background and display its ID:
    docker run --detach image command
 

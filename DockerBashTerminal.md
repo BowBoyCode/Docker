@@ -1,4 +1,4 @@
-Sure! Below is a simple example of a Dockerfile that sets up a Bash terminal in a Docker container. This Dockerfile uses the official Ubuntu image as the base and installs Bash. 
+# Below is a simple example of a Dockerfile that sets up a Bash terminal in a Docker container. This Dockerfile uses the official Ubuntu image as the base and installs Bash. 
 
 Here's the Dockerfile:
 

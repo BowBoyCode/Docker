@@ -10,8 +10,9 @@
 ```
 
  - Run command in a one-off container in interactive mode and pseudo-TTY:
+```
    docker run --rm --interactive --tty image command
-
+```
  - Run command in a new container with passed environment variables:
    docker run --env 'variable=value' --env variable image command
 

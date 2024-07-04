@@ -5,7 +5,9 @@
    docker run image:tag command
 ```
  - Run command in a new container in background and display its ID:
+``` bash
    docker run --detach image command
+```
 
  - Run command in a one-off container in interactive mode and pseudo-TTY:
    docker run --rm --interactive --tty image command

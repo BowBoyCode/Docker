@@ -17,14 +17,21 @@
    docker run --env 'variable=value' --env variable image command
 ```
  - Run command in a new container with bind mounted volumes:
+``` bash
    docker run --volume /path/to/host_path:/path/to/container_path image command
 
  - Run command in a new container with published ports:
+``` bash
    docker run --publish host_port:container_port image command
+```
 
  - Run command in a new container overwriting the entrypoint of the image:
+``` bash
    docker run --entrypoint command image
+```
 
  - Run command in a new container connecting it to a network:
+``` bash
    docker run --network network image
+```
 

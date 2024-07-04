@@ -10,7 +10,7 @@
 ```
 
  - Run command in a one-off container in interactive mode and pseudo-TTY:
-```
+``` bash
    docker run --rm --interactive --tty image command
 ```
  - Run command in a new container with passed environment variables:

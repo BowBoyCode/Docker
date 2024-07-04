@@ -13,8 +13,9 @@
    docker run --rm --interactive --tty image command
 ```
  - Run command in a new container with passed environment variables:
+``` bash
    docker run --env 'variable=value' --env variable image command
-
+```
  - Run command in a new container with bind mounted volumes:
    docker run --volume /path/to/host_path:/path/to/container_path image command
 

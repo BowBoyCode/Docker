@@ -1,0 +1,43 @@
+When you install Docker, it creates a system group called `docker`. By default, only the root user has permission to run Docker commands. However, you can add your user to the `docker` group to allow non-root users to run Docker commands without using `sudo`.
+
+### Why add a user to the `docker` group?
+- **Avoid using `sudo`**: By adding your user to the `docker` group, you won’t need to type `sudo` every time you run a Docker command, making it more convenient.
+- **Non-root Docker access**: For security reasons, it's often better not to run commands as root. Using the `docker` group allows you to run containers and manage Docker as a regular user.
+
+### Steps to add a user to the `docker` group:
+
+1. **Create the `docker` group** (if it doesn’t already exist):
+   When you install Docker, this group is usually created automatically. You can verify it using:
+   ```bash
+   getent group docker
+   ```
+
+2. **Add your user to the `docker` group**:
+   Use the following command to add your user to the `docker` group (replace `username` with your actual username):
+   ```bash
+   sudo usermod -aG docker $USER
+   ```
+   - `-aG` appends your user to the `docker` group without removing them from other groups.
+   - `$USER` is an environment variable that represents your current user.
+
+3. **Log out and log back in**:
+   After adding your user to the `docker` group, log out and log back in for the group membership to take effect. Alternatively, you can use:
+   ```bash
+   newgrp docker
+   ```
+   This avoids the need to log out and log back in by activating the group change immediately in your current session.
+
+4. **Verify that your user has Docker permissions**:
+   Run a Docker command like `docker ps` to ensure it works without `sudo`:
+   ```bash
+   docker ps
+   ```
+
+   If you can list the running containers without using `sudo`, it means the permissions are properly configured.
+
+### Managing Security Risks
+While adding users to the `docker` group allows non-root users to manage Docker, keep in mind:
+- **Root access**: Docker provides powerful privileges over the host system, and users in the `docker` group can potentially escalate privileges. In essence, a user with Docker access has near-root access because they can start containers that modify the system.
+- **Limit access**: Only trusted users should be added to the `docker` group.
+
+Let me know if you need more details on managing Docker users or security!

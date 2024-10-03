@@ -4,7 +4,7 @@ To resolve the `libEGL missing` issue when running Firefox in a Docker container
 
 ---
 
-# Running Firefox in a Docker Container with Internet Access (Fix for `libpci` and `libEGL` missing)
+# Running Firefox in a Docker Container on Debian 12 with Internet Access (Fix for `libpci` and `libEGL` missing)
 
 ### 1. **Create a Dockerfile**
 

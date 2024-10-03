@@ -1,32 +1,24 @@
-Running Firefox in a Docker container with internet access is possible and can be useful for isolating browsing activity from your main system. Here’s how you can do it by creating a Docker container that runs Firefox with internet access, using GUI forwarding to display the Firefox window.
+To resolve the `libEGL missing` issue when running Firefox in a Docker container, you need to install the `libegl1` package, which provides the required `libEGL` libraries. Let's modify the solution to include this missing library.
 
-### Steps to Run Firefox in a Docker Container with Internet Access:
+### Updated Steps in Markdown:
 
-#### 1. **Install Docker** (if not already installed):
-If you don't have Docker installed, follow these steps for [installing Docker](https://docs.docker.com/engine/install/).
+---
 
-#### 2. **Create a Dockerfile**:
-You need to create a `Dockerfile` that defines the environment for running Firefox. This file will use a base image with a graphical environment, and it should install Firefox and some necessary dependencies.
+# Running Firefox in a Docker Container with Internet Access (Fix for `libpci` and `libEGL` missing)
 
-Create a directory for your project, e.g., `firefox-container`:
-```bash
-mkdir firefox-container
-cd firefox-container
-```
+### 1. **Create a Dockerfile**
 
-Then, create a file named `Dockerfile`:
-```bash
-touch Dockerfile
-```
+In a directory of your choice, create a file named `Dockerfile` with the following content:
 
-Add the following content to your `Dockerfile`:
 ```Dockerfile
-# Use an official Ubuntu image as a base
-FROM ubuntu:22.04
+# Use Debian base image to avoid Snap and install Firefox ESR
+FROM debian:bullseye-slim
 
-# Install dependencies
+# Install necessary packages including libEGL and libpci
 RUN apt-get update && \
-    apt-get install -y firefox x11-apps libgl1-mesa-glx libxrender1 libxtst6 libxi6
+    apt-get install -y firefox-esr x11-apps libgl1-mesa-glx libxrender1 \
+    libxtst6 libxi6 libgl1 libpci3 libegl1 && \
+    apt-get clean
 
 # Add user to avoid running as root
 RUN useradd -ms /bin/bash dockeruser
@@ -38,51 +30,61 @@ USER dockeruser
 CMD ["firefox"]
 ```
 
-This Dockerfile:
-- Uses an **Ubuntu 22.04** base image.
-- Installs Firefox and necessary X11 dependencies for displaying graphical applications.
-- Adds a non-root user (`dockeruser`) to avoid running Firefox as the root user.
-- Sets Firefox to launch by default.
+### 2. **Build the Docker Image**
 
-#### 3. **Build the Docker image**:
-Now, you need to build the image from the `Dockerfile`. Run the following command:
+Run the following command to build the image from the Dockerfile:
+
 ```bash
 docker build -t firefox-container .
 ```
-This creates a Docker image tagged `firefox-container` based on your `Dockerfile`.
 
-#### 4. **Run Firefox with X11 Display Forwarding**:
-You need to enable the container to forward GUI applications like Firefox to your local system’s display. X11 is commonly used for this on Linux.
+This command creates an image named `firefox-container`, now with the required `libEGL` and `libpci` libraries included.
 
-1. **Allow X11 connections:**
-   Run the following command on your host system to allow the container to access your display:
-   ```bash
-   xhost +
-   ```
+### 3. **Run the Container**
 
-2. **Run the container**:
-   Use the following Docker command to run Firefox in the container, forwarding the display from the container to your local X11 server:
-   ```bash
-   docker run -it \
-       --rm \
-       --name firefox-instance \
-       -e DISPLAY=$DISPLAY \
-       -v /tmp/.X11-unix:/tmp/.X11-unix \
-       firefox-container
-   ```
+Now, run the Firefox container with X11 forwarding:
 
-   Explanation:
-   - `-it`: Runs the container in interactive mode.
-   - `--rm`: Removes the container when Firefox is closed.
-   - `--name firefox-instance`: Gives the container a name.
-   - `-e DISPLAY=$DISPLAY`: Passes the `DISPLAY` environment variable from the host to the container, so Firefox can use your system's display.
-   - `-v /tmp/.X11-unix:/tmp/.X11-unix`: Mounts the X11 socket to allow the container to communicate with your display.
+```bash
+docker run -it \
+    --rm \
+    --name firefox-instance \
+    -e DISPLAY=$DISPLAY \
+    -v /tmp/.X11-unix:/tmp/.X11-unix \
+    firefox-container
+```
 
-### 5. **Verify Firefox is Running**:
-After running the command above, Firefox should open in a new window on your local system, running inside the Docker container but with internet access.
+### 4. **Allow X11 Connections**
 
-### Troubleshooting:
-- **Firewall/Network issues**: Docker containers typically have internet access out of the box, but if you have custom firewall or network settings, ensure they aren’t blocking Docker’s network bridge.
-- **Graphics errors**: If you run into issues with graphics rendering, you may need to install additional libraries for your graphics card.
+Before running the container, allow X11 connections to your display on the host machine by running:
 
-If you need help with tweaking the container for performance or other advanced settings, let me know!
+```bash
+xhost +
+```
+
+### 5. **Clean Up (Optional)**
+
+If you want to remove the previous images and containers to free up space, follow these steps:
+
+- **List and remove containers:**
+
+  ```bash
+  docker ps -a
+  docker rm <container_id>
+  ```
+
+- **List and remove images:**
+
+  ```bash
+  docker images
+  docker rmi <image_id>
+  ```
+
+- **Clean up all unused resources:**
+
+  ```bash
+  docker system prune -a
+  ```
+
+---
+
+This updated Dockerfile and setup should resolve both the `libpci` and `libEGL` missing errors. Let me know if it works or if you encounter any further issues!
